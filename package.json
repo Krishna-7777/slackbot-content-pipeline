@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Krishna-7777/slackbot-content-pipeline#readme",
   "dependencies": {
     "@slack/bolt": "^4.5.0",
+    "csv-parse": "^6.1.0",
     "dotenv": "^17.2.3",
     "ml-kmeans": "^6.0.0"
   }

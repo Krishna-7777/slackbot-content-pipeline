@@ -1,3 +1,5 @@
+const keywordsToPostsPipeline = require('../pipeline/keywordsToPostsPipeline');
+
 async function processUploadedFile({ command, ack, say, logger, client }) {
   await ack({ "response_type": "in_channel" });
   const args = command.text.trim();
@@ -8,34 +10,31 @@ async function processUploadedFile({ command, ack, say, logger, client }) {
   }
 
   const fileId = args;
-  let  file;
+  let file;
   try {
     file = await client.files.info({ file: fileId })
     file = file.file
   } catch {
     file = null
-  } 
-    
+  }
+
   if (!file) {
     await say(`File with ID *${fileId}* not found.`);
     await fetchFilesAndSendRespectiveResponse()
     return;
   }
-
-  await say(`Downloading *${file.name}*...`);
-
+  let csvText = ""
   try {
     const res = await fetch(file.url_private, {
       headers: { Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}` }
     });
-    const csvText = await res.text();
-
-    await say(`Successfully downloaded *${file.name}* (${csvText.length} chars).`);
-
+    csvText = await res.text();
   } catch (err) {
     logger.error(err);
     await say(`Error while fetching file: ${err.message}`);
   }
+
+  await keywordsToPostsPipeline(csvText, say);
 
   async function fetchFilesAndSendRespectiveResponse() {
     let fileList = await client.files.list({
