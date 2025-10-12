@@ -1,0 +1,25 @@
+{
+  "name": "slackbot-content-pipeline",
+  "version": "1.0.0",
+  "description": "A Slackbot that helps a content team streamline keyword-based content creation. The bot allow users to upload raw keyword lists, automatically segment them into groups, generate outlines by analyzing top-ranking web content, suggest post ideas and finally generate a detailed report of the complete results.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Krishna-7777/slackbot-content-pipeline.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Krishna-7777/slackbot-content-pipeline/issues"
+  },
+  "homepage": "https://github.com/Krishna-7777/slackbot-content-pipeline#readme",
+  "dependencies": {
+    "@slack/bolt": "^4.5.0",
+    "dotenv": "^17.2.3",
+    "ml-kmeans": "^6.0.0"
+  }
+}
