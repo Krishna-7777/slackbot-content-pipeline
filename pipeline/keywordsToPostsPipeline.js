@@ -6,15 +6,23 @@ const { suggestPostIdeas } = require('../utils/suggestPostIdeas');
 const { analyzeTopContent } = require('../utils/analyzeTopContent')
 const { generatePDFReport } = require('../utils/generatePDFReport');
 const { uploadResultsToSlack } = require('../utils/uploadResultsToSlack');
+const { logHistory } = require('../db/historyLogger');
 
-async function processKeywordsPipeline(text, say = async (msg) => console.log(msg), client, channelId) {
+async function processKeywordsPipeline(text, say = async (msg) => console.log(msg), client, channelId, command = "Idea Generation") {
+  let id
   try {
 
     await say("📥 Starting keyword processing...");
+    id = logHistory({
+      command,
+      keywords_raw: text
+    })?.id;
 
     // Parse keywords
     const parsed = parseCSV(text);
     await say(`✅ Parsed ${parsed.length} raw keywords.`);
+
+    logHistory({ id, keywords_count: parsed.length })
 
     // Clean and normalize
     const cleaned = cleanKeywords(parsed);
@@ -53,13 +61,16 @@ async function processKeywordsPipeline(text, say = async (msg) => console.log(ms
 
     // Upload Pdf File to slack
     await say("📤 Uploading report");
-    await uploadResultsToSlack(client, channelId, pdfPath, "Slackbot Content Pipeline Report "+ `(${new Date().toLocaleDateString()})`);
+    await uploadResultsToSlack(client, channelId, pdfPath, "Slackbot Content Pipeline Report " + `(${new Date().toLocaleDateString()})`);
 
     await say("🚀 Keyword processing pipeline completed successfully!");
+    logHistory({ id, status: "completed" })
 
   } catch (error) {
     console.error(error);
     await say(`❌ Pipeline Failed\n${error?.message || ""}`);
+    if(id)
+      logHistory({ id, status: "failed", error_reason: error?.message || JSON.stringify(error)})
   }
 }
 

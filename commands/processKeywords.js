@@ -10,7 +10,7 @@ async function processKeywords({ command, ack, say, logger, client }) {
   }
 
   logger.info(`Processing keywords`);
-  await keywordsToPostsPipeline(input.split('\n').join(' '), say, client);
+  await keywordsToPostsPipeline(input.split('\n').join(' '), say, client, command.channel_id, command.command);
 }
 
 module.exports = processKeywords;

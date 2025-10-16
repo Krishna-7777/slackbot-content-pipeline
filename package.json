@@ -20,6 +20,7 @@
   "dependencies": {
     "@huggingface/transformers": "^3.7.5",
     "@slack/bolt": "^4.5.0",
+    "better-sqlite3": "^12.4.1",
     "cheerio": "^1.1.2",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.3",
