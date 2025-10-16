@@ -18,9 +18,13 @@
   },
   "homepage": "https://github.com/Krishna-7777/slackbot-content-pipeline#readme",
   "dependencies": {
+    "@huggingface/transformers": "^3.7.5",
     "@slack/bolt": "^4.5.0",
+    "cheerio": "^1.1.2",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.3",
-    "ml-kmeans": "^6.0.0"
+    "ml-kmeans": "^6.0.0",
+    "pdfkit": "^0.17.2",
+    "puppeteer": "^24.24.1"
   }
 }

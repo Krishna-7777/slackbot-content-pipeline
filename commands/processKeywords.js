@@ -1,6 +1,6 @@
 const keywordsToPostsPipeline = require('../pipeline/keywordsToPostsPipeline');
 
-async function processKeywords({ command, ack, say, logger }) {
+async function processKeywords({ command, ack, say, logger, client }) {
   await ack({ "response_type": "in_channel" });
 
   const input = command.text?.trim();
@@ -10,7 +10,7 @@ async function processKeywords({ command, ack, say, logger }) {
   }
 
   logger.info(`Processing keywords`);
-  await keywordsToPostsPipeline(input, say);
+  await keywordsToPostsPipeline(input.split('\n').join(' '), say, client);
 }
 
 module.exports = processKeywords;

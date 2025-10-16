@@ -34,7 +34,7 @@ async function processUploadedFile({ command, ack, say, logger, client }) {
     await say(`Error while fetching file: ${err.message}`);
   }
 
-  await keywordsToPostsPipeline(csvText, say);
+  await keywordsToPostsPipeline(csvText, say, client, command.channel_id);
 
   async function fetchFilesAndSendRespectiveResponse() {
     let fileList = await client.files.list({
