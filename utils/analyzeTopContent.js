@@ -39,7 +39,7 @@ async function analyzeTopContent(clusters) {
         );
 
         await page.goto(searchUrl, { waitUntil: "domcontentloaded" });
-        await delay(1500 + Math.random() * 1000);
+        await delay(Math.random() * 100);
 
         // Extract top organic result links
         const links = await page.$$eval("a", (as) =>
@@ -53,7 +53,7 @@ async function analyzeTopContent(clusters) {
                 !href.includes("/images") &&
                 !href.includes("/videos")
             )
-            .slice(0, 5)
+            .slice(0, 2)
         );
 
         await page.close(); // free memory immediately
@@ -95,7 +95,7 @@ async function analyzeTopContent(clusters) {
         console.error(`❌ Error while searching "${query}":`, err.message);
       }
 
-      await delay(Math.random() * 1000);
+      await delay(Math.random() * 100);
     }
 
     analysisResults.push({
@@ -104,7 +104,7 @@ async function analyzeTopContent(clusters) {
       topPages: allPagesData,
     });
 
-    await delay(Math.random() * 1000);
+    await delay(Math.random() * 100);
   }
 
   await browser.close();
