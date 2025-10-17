@@ -1,0 +1,5 @@
+node_modules
+test
+.env
+reports
+pipeline_history.db
