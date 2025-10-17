@@ -8,20 +8,21 @@ async function delay(ms) {
 async function analyzeTopContent(clusters) {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--single-process",
+      "--no-zygote",
+      "--disable-gpu",
+    ],
+    executablePath: puppeteer.executablePath(),
   });
-
-  const page = await browser.newPage();
-  await page.setDefaultNavigationTimeout(0);
-  await page.setUserAgent(
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
-  );
 
   const analysisResults = [];
 
   for (const cluster of clusters) {
-    // Take at most 5 keywords per cluster
-    const searchKeywords = cluster.keywords.slice(0, 5);
+    const searchKeywords = cluster.keywords;
     console.log(`🔍 Analyzing cluster: ${searchKeywords.join(", ")}`);
 
     const allPagesData = [];
@@ -31,6 +32,12 @@ async function analyzeTopContent(clusters) {
       console.log(`🌐 Searching Brave for: ${query}`);
 
       try {
+        const page = await browser.newPage();
+        await page.setDefaultNavigationTimeout(0);
+        await page.setUserAgent(
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+        );
+
         await page.goto(searchUrl, { waitUntil: "domcontentloaded" });
         await delay(1500 + Math.random() * 1000);
 
@@ -49,12 +56,20 @@ async function analyzeTopContent(clusters) {
             .slice(0, 5)
         );
 
+        await page.close(); // free memory immediately
+
         for (const url of links) {
           try {
-            console.log(`🕸️ Visiting: ${url}`);
-            await page.goto(url, { waitUntil: "domcontentloaded" });
+            const page2 = await browser.newPage();
+            await page2.setDefaultNavigationTimeout(0);
+            await page2.setUserAgent(
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+            );
 
-            const html = await page.content();
+            console.log(`🕸️ Visiting: ${url}`);
+            await page2.goto(url, { waitUntil: "domcontentloaded" });
+
+            const html = await page2.content();
             const $ = cheerio.load(html);
 
             const title = $("title").text().trim();
@@ -70,6 +85,8 @@ async function analyzeTopContent(clusters) {
             });
 
             allPagesData.push({ query, url, title, description, headings });
+
+            await page2.close(); // free memory immediately
           } catch (err) {
             console.error(`⚠️ Failed to scrape ${url}:`, err.message);
           }
@@ -78,8 +95,7 @@ async function analyzeTopContent(clusters) {
         console.error(`❌ Error while searching "${query}":`, err.message);
       }
 
-      // Wait between searches to avoid hitting Brave rate limits
-      await delay(2000 + Math.random() * 1000);
+      await delay(Math.random() * 1000);
     }
 
     analysisResults.push({
@@ -88,8 +104,7 @@ async function analyzeTopContent(clusters) {
       topPages: allPagesData,
     });
 
-    // Delay between clusters
-    await delay(3000 + Math.random() * 2000);
+    await delay(Math.random() * 1000);
   }
 
   await browser.close();
