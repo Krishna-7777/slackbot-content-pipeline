@@ -9,6 +9,7 @@ const app = new App({
 app.command("/process-keywords", require('./commands/processKeywords'))
 app.command("/process-uploaded-file", require('./commands/processUploadedFile'));
 app.command("/history", require('./commands/history'));
+app.command("/regenerate", require("./commands/regenerate"));
 
 ; (async () => {
   // Start the app

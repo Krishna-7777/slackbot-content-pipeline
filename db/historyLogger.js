@@ -86,3 +86,9 @@ export function getHistory(page = 1) {
   `);
   return stmt.all(limit, offset);
 }
+
+export function getHistoryById(id) {
+  const stmt = db.prepare("SELECT * FROM history WHERE id = ?");
+  const row = stmt.get(id);
+  return row || null;
+}

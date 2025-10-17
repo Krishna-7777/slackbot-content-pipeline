@@ -22,7 +22,7 @@ async function historyCommand({ ack, say, command }) {
                             ? "❌"
                             : "⏳";
 
-                return `#${log.id} \n${statusEmoji} *${log.command}* \nStatus: ${log.status}${log.error_reason ? `\nError: ${log.error_reason}` : ""} \nKeywords: ${log.keywords_count} \nRaw: ${log.keywords_raw} \nTime: ${log.created_on}`;
+                return `${statusEmoji} *${log.command}* \nID: ${log.id} \nStatus: ${log.status}${log.error_reason ? `\nError: ${log.error_reason}` : ""} \nKeywords: ${log.keywords_count} \nTime: ${log.created_on}`;
             })
             .join("\n\n");
 
