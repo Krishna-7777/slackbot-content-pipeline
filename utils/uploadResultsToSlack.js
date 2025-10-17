@@ -13,6 +13,7 @@ export async function uploadResultsToSlack(client, channelId, filePath, title = 
       initial_comment: "📊 Here's your content pipeline report!",
       title,
       file: fileStream,
+      filename: title + ".pdf"
     });
 
     if (result.ok) {
